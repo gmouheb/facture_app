@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Générateur des Factures</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .entity-sections {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .entity-section {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .entity-section h3 {
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+            color: #3498db;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .payment-method-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .payment-option {
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Générateur des Factures</h1>
+
+        <form id="invoiceForm">
+            <div class="entity-sections">
+                <div class="entity-section">
+                    <h3>Informations du Vendeur</h3>
+                    <div class="form-group">
+                        <label for="seller_name">Nom de l'entreprise</label>
+                        <input type="text" id="seller_name" name="seller_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="seller_address">Adresse</label>
+                        <input type="text" id="seller_address" name="seller_address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="seller_city">Ville, Pays</label>
+                        <input type="text" id="seller_city" name="seller_city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="seller_phone">Téléphone</label>
+                        <input type="text" id="seller_phone" name="seller_phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="seller_email">Email</label>
+                        <input type="email" id="seller_email" name="seller_email" required>
+                    </div>
+                </div>
+
+                <div class="entity-section">
+                    <h3>Informations du Client</h3>
+                    <div class="form-group">
+                        <label for="client_name">Nom du client</label>
+                        <input type="text" id="client_name" name="client_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="client_address">Adresse</label>
+                        <input type="text" id="client_address" name="client_address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="client_city">Ville, Pays</label>
+                        <input type="text" id="client_city" name="client_city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="client_phone">Téléphone</label>
+                        <input type="text" id="client_phone" name="client_phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="client_email">Email</label>
+                        <input type="email" id="client_email" name="client_email" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="items-container">
+                <h3>Articles</h3>
+                <div class="item-header">
+                    <div class="header-cell">Désignation</div>
+                    <div class="header-cell">Quantité</div>
+                    <div class="header-cell">Prix Unitaire (TND)</div>
+                    <div class="header-cell">Actions</div>
+                </div>
+
+                <div id="items">
+                    <div class="item-row">
+                        <div class="item-cell">
+                            <input type="text" name="designation" class="designation" required>
+                        </div>
+                        <div class="item-cell">
+                            <input type="number" name="quantity" class="quantity" min="1" step="1" value="1" required>
+                        </div>
+                        <div class="item-cell">
+                            <input type="number" name="unit_price" class="unit-price" min="0.01" step="0.01" required>
+                        </div>
+                        <div class="item-cell">
+                            <button type="button" class="remove-item" disabled>Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="entity-section" style="margin-top: 20px;">
+                <h3>Frais d'envoi</h3>
+                <div class="form-group">
+                    <label for="shipping_cost">Frais d'envoi (TND)</label>
+                    <input type="number" id="shipping_cost" name="shipping_cost" min="0" step="0.01" placeholder="Optionnel">
+                </div>
+            </div>
+
+            <div class="payment-method-section">
+                <h3>Méthode de Paiement</h3>
+                <div class="payment-options">
+                    <div class="payment-option">
+                        <input type="radio" id="bank_transfer" name="payment_method" value="Virement bancaire" checked>
+                        <label for="bank_transfer">Virement bancaire</label>
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" id="cash" name="payment_method" value="Espèces">
+                        <label for="cash">Espèces</label>
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" id="check" name="payment_method" value="Chèque">
+                        <label for="check">Chèque</label>
+                    </div>
+                    <div class="payment-option">
+                        <input type="radio" id="credit_card" name="payment_method" value="Carte de crédit">
+                        <label for="credit_card">Carte de crédit</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="addItem">Ajouter un Article</button>
+                <button type="submit" id="generateInvoice">Générer la Facture</button>
+            </div>
+        </form>
+
+        <div id="invoiceResult" style="display: none;">
+            <div id="invoiceContent"></div>
+            <form id="pdfForm" action="/download_pdf" method="post">
+                <input type="hidden" name="invoice_html" id="invoiceHtml">
+                <button type="submit">Télécharger PDF</button>
+            </form>
+            <button id="backButton">Retour au Formulaire</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const itemsContainer = document.getElementById('items');
+            const addItemButton = document.getElementById('addItem');
+            const invoiceForm = document.getElementById('invoiceForm');
+            const invoiceResult = document.getElementById('invoiceResult');
+            const invoiceContent = document.getElementById('invoiceContent');
+            const invoiceHtmlInput = document.getElementById('invoiceHtml');
+            const backButton = document.getElementById('backButton');
+
+            // Add new item row
+            addItemButton.addEventListener('click', function() {
+                const newRow = document.createElement('div');
+                newRow.className = 'item-row';
+                newRow.innerHTML = `
+                    <div class="item-cell">
+                        <input type="text" name="designation" class="designation" required>
+                    </div>
+                    <div class="item-cell">
+                        <input type="number" name="quantity" class="quantity" min="1" step="1" value="1" required>
+                    </div>
+                    <div class="item-cell">
+                        <input type="number" name="unit_price" class="unit-price" min="0.01" step="0.01" required>
+                    </div>
+                    <div class="item-cell">
+                        <button type="button" class="remove-item">Supprimer</button>
+                    </div>
+                `;
+                itemsContainer.appendChild(newRow);
+
+                // Enable all remove buttons if there's more than one item
+                updateRemoveButtons();
+            });
+
+            // Remove item row
+            itemsContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-item')) {
+                    e.target.closest('.item-row').remove();
+                    updateRemoveButtons();
+                }
+            });
+
+            // Update remove buttons state
+            function updateRemoveButtons() {
+                const removeButtons = document.querySelectorAll('.remove-item');
+                const disableButtons = removeButtons.length <= 1;
+
+                removeButtons.forEach(button => {
+                    button.disabled = disableButtons;
+                });
+            }
+
+            // Generate invoice
+            invoiceForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Collect form data
+                const items = [];
+                const rows = document.querySelectorAll('.item-row');
+
+                rows.forEach(row => {
+                    const designation = row.querySelector('.designation').value;
+                    const quantity = row.querySelector('.quantity').value;
+                    const unitPrice = row.querySelector('.unit-price').value;
+
+                    items.push({
+                        designation: designation,
+                        quantity: quantity,
+                        unit_price: unitPrice
+                    });
+                });
+
+                // Get selected payment method
+                const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+
+                // Get seller information
+                const sellerName = document.getElementById('seller_name').value;
+                const sellerAddress = document.getElementById('seller_address').value;
+                const sellerCity = document.getElementById('seller_city').value;
+                const sellerPhone = document.getElementById('seller_phone').value;
+                const sellerEmail = document.getElementById('seller_email').value;
+
+                // Get client information
+                const clientName = document.getElementById('client_name').value;
+                const clientAddress = document.getElementById('client_address').value;
+                const clientCity = document.getElementById('client_city').value;
+                const clientPhone = document.getElementById('client_phone').value;
+                const clientEmail = document.getElementById('client_email').value;
+
+                // Create seller and client objects
+                const seller = {
+                    name: sellerName,
+                    address: sellerAddress,
+                    city: sellerCity,
+                    phone: sellerPhone,
+                    email: sellerEmail
+                };
+
+                const client = {
+                    name: clientName,
+                    address: clientAddress,
+                    city: clientCity,
+                    phone: clientPhone,
+                    email: clientEmail
+                };
+
+                // Get shipping cost (can be null if left blank)
+                const shippingCost = document.getElementById('shipping_cost').value;
+
+                // Send data to server
+                fetch('/generate_invoice', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'items=' + encodeURIComponent(JSON.stringify(items)) + 
+                          '&payment_method=' + encodeURIComponent(paymentMethod) +
+                          '&seller=' + encodeURIComponent(JSON.stringify(seller)) +
+                          '&client=' + encodeURIComponent(JSON.stringify(client)) +
+                          '&shipping_cost=' + encodeURIComponent(shippingCost)
+                })
+                .then(response => response.text())
+                .then(html => {
+                    // Display invoice
+                    invoiceContent.innerHTML = html;
+                    invoiceHtmlInput.value = html;
+                    invoiceForm.style.display = 'none';
+                    invoiceResult.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while generating the invoice.');
+                });
+            });
+
+            // Back to form
+            backButton.addEventListener('click', function() {
+                invoiceForm.style.display = 'block';
+                invoiceResult.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

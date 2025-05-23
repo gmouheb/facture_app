@@ -1,0 +1,154 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+/* Form Styles */
+.items-container {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.item-header {
+    display: flex;
+    background-color: #f8f9fa;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+}
+
+.header-cell {
+    padding: 12px 15px;
+    flex: 1;
+}
+
+.item-row {
+    display: flex;
+    border-bottom: 1px solid #eee;
+}
+
+.item-row:last-child {
+    border-bottom: none;
+}
+
+.item-cell {
+    padding: 8px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+input[type="number"] {
+    text-align: right;
+}
+
+button {
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.remove-item {
+    background-color: #e74c3c;
+}
+
+.remove-item:hover {
+    background-color: #c0392b;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+/* Invoice Result Styles */
+#invoiceResult {
+    margin-top: 30px;
+}
+
+#invoiceContent {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+#pdfForm {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+#backButton {
+    background-color: #7f8c8d;
+}
+
+#backButton:hover {
+    background-color: #636e72;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .item-row, .item-header {
+        flex-direction: column;
+    }
+
+    .item-cell, .header-cell {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions button {
+        margin-bottom: 10px;
+    }
+}

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture</title>
+    <style>
+        /* Inline styles for PDF generation */
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            width: 210mm;
+            height: 297mm;
+        }
+        .invoice-container {
+            width: 180mm;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            padding: 15mm 8mm;
+            position: relative;
+            min-height: 277mm;
+        }
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 20px;
+        }
+        .invoice-title {
+            font-size: 26px;
+            font-weight: bold;
+            margin: 0;
+            color: #3498db;
+        }
+        .logo-placeholder {
+            width: 150px;
+            height: 60px;
+            border: 1px dashed #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+            font-size: 14px;
+        }
+        .entity-details {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 30px;
+            justify-content: space-between;
+        }
+        .entity-box {
+            width: 48%;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        .entity-divider {
+            width: 1px;
+            background-color: rgba(128, 128, 128, 0.5);
+            margin: 0 10px;
+            align-self: stretch;
+        }
+        .entity-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #3498db;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 3px;
+        }
+        .metadata-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .metadata-table th, .metadata-table td {
+            padding: 6px 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .metadata-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            width: 30%;
+        }
+        .additional-info {
+            font-size: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #3498db;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .items-table th, .items-table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .items-table th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        .items-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .totals {
+            margin-top: 20px;
+            margin-left: auto;
+            width: 250px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .total-label {
+            font-weight: bold;
+        }
+        .grand-total {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #3498db;
+            color: #3498db;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <h1 class="invoice-title">Facture</h1>
+            <img src="{{ url_for('static', filename='icons/img.png') }}" alt="Logo" style="width: 150px; height: auto; object-fit: contain;">
+        </div>
+
+        <div class="entity-details">
+            <div class="entity-box">
+                <div class="entity-title">Vendeur</div>
+                <p>{{ seller.name }}<br>
+                {{ seller.address }}<br>
+                {{ seller.city }}<br>
+                Tél: {{ seller.phone }}<br>
+                Email: {{ seller.email }}</p>
+            </div>
+            <div class="entity-divider"></div>
+            <div class="entity-box">
+                <div class="entity-title">Client</div>
+                <p>{{ client.name }}<br>
+                {{ client.address }}<br>
+                {{ client.city }}<br>
+                Tél: {{ client.phone }}<br>
+                Email: {{ client.email }}</p>
+            </div>
+        </div>
+
+        <table class="metadata-table">
+            <tr>
+                <th>Date de facturation</th>
+                <td>{{ now().strftime('%d/%m/%Y') }}</td>
+                <th>Numéro de facture</th>
+                <td>FACT-{{ now().strftime('%Y%m%d') }}-001</td>
+            </tr>
+            <tr>
+                <th>Échéance</th>
+                <td>{{ now().strftime('%d/%m/%Y') }}</td>
+                <th>Paiement</th>
+                <td>{{ payment_method }}</td>
+            </tr>
+            <tr>
+                <th>Référence</th>
+                <td colspan="3">REF-{{ now().strftime('%Y%m') }}-0001</td>
+            </tr>
+        </table>
+
+
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th class="text-center">Quantité</th>
+                    <th>Désignation</th>
+                    <th class="text-center">Unité</th>
+                    <th class="text-right">Prix unitaire HT</th>
+                    <th class="text-right">Total HT</th>
+                    <th class="text-center">TVA</th>
+                    <th class="text-right">Total TVA</th>
+                    <th class="text-right">Total TTC</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td>{{ item.designation }}</td>
+                    <td class="text-center">unité</td>
+                    <td class="text-right">{{ "%.2f"|format(item.unit_price|float) }} TND</td>
+                    <td class="text-right">{{ "%.2f"|format(item.quantity|float * item.unit_price|float) }} TND</td>
+                    <td class="text-center">19%</td>
+                    <td class="text-right">{{ "%.2f"|format(item.quantity|float * item.unit_price|float * 0.19) }} TND</td>
+                    <td class="text-right">{{ "%.2f"|format(item.quantity|float * item.unit_price|float + item.quantity|float * item.unit_price|float * 0.19) }} TND</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <div class="total-row">
+                <span class="total-label">Total HT:</span>
+                <span>{{ "%.2f"|format(subtotal) }} TND</span>
+            </div>
+            {% if shipping_cost > 0 %}
+            <div class="total-row">
+                <span class="total-label">Frais d'envoi:</span>
+                <span>{{ "%.2f"|format(shipping_cost) }} TND</span>
+            </div>
+            {% endif %}
+            <div class="total-row">
+                <span class="total-label">Total TVA (19%):</span>
+                <span>{{ "%.2f"|format(tva) }} TND</span>
+            </div>
+            <div class="total-row grand-total">
+                <span class="total-label">Total TTC:</span>
+                <span>{{ "%.2f"|format(total) }} TND</span>
+            </div>
+        </div>
+        <div class="additional-info">
+            <strong>Informations additionnelles:</strong> Cette facture est payable dans les 30 jours suivant la date d'émission. Tout retard de paiement entraînera des pénalités.
+        </div>
+
+        <div class="footer">
+            <p>Merci pour votre confiance!</p>
+        </div>
+    </div>
+</body>
+</html>
