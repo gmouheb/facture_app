@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, make_response
 from weasyprint import HTML, CSS
-from weasyprint.text.fonts import FontConfiguration
+from weasyprint import FontConfiguration
 import io
 import json
 from datetime import datetime
