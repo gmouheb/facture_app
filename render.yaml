@@ -2,9 +2,15 @@ services:
   - type: web
     name: flask-invoice-app
     env: python
-    rootDir: /opt/render/project/src/facture_app  # Point to the directory created in build.sh
     buildCommand: chmod +x build.sh && ./build.sh && pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.12
+    packages:
+      - libcairo2
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libgdk-pixbuf2.0-0
+      - libffi-dev
+      - shared-mime-info
