@@ -2,6 +2,7 @@ services:
   - type: web
     name: flask-invoice-app
     env: python
+    rootDir: .  # This tells Render to use the repository root
     buildCommand: chmod +x build.sh && ./build.sh && pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
